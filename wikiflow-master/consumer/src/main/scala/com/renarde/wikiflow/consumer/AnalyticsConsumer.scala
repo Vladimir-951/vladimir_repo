@@ -86,15 +86,7 @@ object AnalyticsConsumer extends App with LazyLogging {
       .count() 
       .filter($"bot" =!= true)
       .drop($"bot")
-      //.withColumn("window", col("window").cast("string"))
-      //.withColumn("type", col("type").cast("string"))
-      //.withColumn("count", col("count").cast("string"))
-      
-      //.withWatermark("timestamp", "10 minutes")
-      //.groupBy("type", "bot")
-      //.count()
 
-  // please edit the code below
   val transformedStream: DataFrame = parsedData
 
   transformedStream.writeStream
@@ -102,10 +94,6 @@ object AnalyticsConsumer extends App with LazyLogging {
     .format("delta")
     .option("checkpointLocation", "/storage/analytics-consumer/checkpoints1")
     .start("/storage/analytics-consumer/output1")
-    //.outputMode("update")
-    //.format("console")
-    //.ption("checkpointLocation", "/storage/analytics-consumer/checkpoints")
-    //.start()
 
   spark.streams.awaitAnyTermination()
 }
