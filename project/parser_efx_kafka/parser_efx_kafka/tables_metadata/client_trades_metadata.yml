@@ -1,0 +1,59 @@
+ClientTrades:
+  sql: "merge into {env}_gmta.efx.client_trades as tgt using (
+          values ({source_values})
+        ) as src ({source_attributes})
+        on tgt.execution_id = src.execution_id and tgt.execute_timestamp = src.execute_timestamp
+        when not matched then
+          insert ({source_attributes})
+          values ({source_values});"
+
+  sql_delete: "delete from {env}_gmta.efx.client_trades where execute_timestamp >= '{batch_tz_transact_time}';"
+
+  main_path:
+    header: ['descriptor']
+    table_name: ['descriptor', 'name']
+
+  path:
+    symbol: {'path': ['data', 'symbol']}
+    client_account: {'path': ['data', 'clientAccount']}
+    efx_order_id: {'path': ['data', 'efxOrderId']}
+    far_value_date: {'path': ['data', 'farValueDate']}
+    trader_price_modified_timestamp: {'path': ['data', 'traderPriceModifiedTimestamp']}
+    trader_price_modified_timestamp_human_readable: {'function': ['date_utc_convert', ['data', 'traderPriceModifiedTimestamp']]}
+    strk_ccy: {'path': ['data', 'strkCcy']}
+    source: {'path': ['data', 'source']}
+    type: {'path': ['data', 'type']}
+    quantity_term_executed_near: {'path': ['data', 'quantityTermExecutedNear']}
+    far_tenor: {'path': ['data', 'farTenor']}
+    client_order_id: {'path': ['data', 'clientOrderId']}
+    near_tenor: {'path': ['data', 'nearTenor']}
+    term_currency: {'path': ['data', 'termCurrency']}
+    trader_price_modified_by: {'path': ['data', 'traderPriceModifiedBy']}
+    fixing_date: {'path': ['data', 'fixingDate']}
+    sub_status: {'path': ['data', 'subStatus']}
+    execution_id: {'path': ['data', 'executionId']}
+    price_executed_far: {'path': ['data', 'priceExecutedFar']}
+    settlement_currency: {'path': ['data', 'settlementCurrency']}
+    execute_timestamp: {'path': ['data', 'executeTimestamp']}
+    execute_timestamp_human_readable: {'function': ['date_utc_convert', ['data', 'executeTimestamp']]}
+    price_executed_near: {'path': ['data', 'priceExecutedNear']}
+    fixing_source: {'path': ['data', 'fixingSource']}
+    quoted_by: {'path': ['data', 'quotedBy']}
+    book: {'path': ['data', 'book']}
+    quote_type: {'path': ['data', 'quoteType']}
+    base_currency: {'path': ['data', 'baseCurrency']}
+    tier: {'path': ['data', 'tier']}
+    strk_px: {'path': ['data', 'strkPx']}
+    quantity_base_executed_near: {'path': ['data', 'quantityBaseExecutedNear']}
+    cash_delta: {'path': ['data', 'cashDelta']}
+    is_reciprocal: {'path': ['data', 'isReciprocal']}
+    product: {'path': ['data', 'product']}
+    side: {'path': ['data', 'side']}
+    cfi: {'path': ['data', 'cfi']}
+    trader_price: {'path': ['data', 'traderPrice']}
+    near_value_date: {'path': ['data', 'nearValueDate']}
+    strategy: {'path': ['data', 'strategy']}
+    swap_points: {'path': ['data', 'swapPoints']}
+    doubles: {'path': ['data', 'doubles']}
+    insert_date_time: 'insert_date_time'
+    modified_date_time: 'modified_date_time'

@@ -1,0 +1,29 @@
+PositionTransferServiceData:
+  sql: "merge into {env}_gmta.efx.position_transfer_service_data as tgt using (
+          values ({source_values})
+        ) as src ({source_attributes})
+        on tgt.trade_id = src.trade_id and tgt.timestamp = src.timestamp
+        when not matched then
+          insert ({source_attributes})
+          values ({source_values});"
+
+  sql_delete: "delete from {env}_gmta.efx.position_transfer_service_data where timestamp >= '{batch_tz_transact_time}';"
+
+  main_path:
+    header: ['descriptor']
+    table_name: ['descriptor', 'name']
+
+  path:
+    trade_id: {'path': ['data', 'tradeId']}
+    timestamp: {'path': ['data', 'timestamp']}
+    timestamp_human_readable: {'function': ['date_utc_convert', ['data', 'timestamp']]}
+    symbol: {'path': ['data', 'symbol']}
+    term_currency: {'path': ['data', 'termCurrency']}
+    to_book: {'path': ['data', 'toBook']}
+    base_amount: {'path': ['data', 'baseAmount']}
+    base_currency: {'path': ['data', 'baseCurrency']}
+    from_book: {'path': ['data', 'fromBook']}
+    term_amount: {'path': ['data', 'termAmount']}
+    comment: {'path': ['data', 'comment']}
+    insert_date_time: 'insert_date_time'
+    modified_date_time: 'modified_date_time'

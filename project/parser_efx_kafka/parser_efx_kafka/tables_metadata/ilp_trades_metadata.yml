@@ -1,0 +1,29 @@
+ILPTrades:
+  sql: "merge into {env}_gmta.efx.ilp_trades as tgt using (
+          values ({source_values})
+        ) as src ({source_attributes})
+        on tgt.id = src.id and tgt.trade_timestamp = src.trade_timestamp
+        when not matched then
+          insert ({source_attributes})
+          values ({source_values});"
+
+  sql_delete: "delete from {env}_gmta.efx.ilp_trades where trade_timestamp >= '{batch_tz_transact_time}';"
+
+  main_path:
+    header: ['descriptor']
+    table_name: ['descriptor', 'name']
+
+  path:
+    id: {'path': ['data', 'id']}
+    trade_timestamp: {'path': ['data', 'tradeTimestamp']}
+    trade_timestamp_human_readable: {'function': ['date_utc_convert', ['data', 'tradeTimestamp']]}
+    symbol: {'path': ['data', 'symbol']}
+    quantity: {'path': ['data', 'quantity']}
+    aggressive_side: {'path': ['data', 'aggressiveSide']}
+    sell_order_id: {'path': ['data', 'sellOrderId']}
+    sell_order_type: {'path': ['data', 'sellOrderType']}
+    buy_order_id: {'path': ['data', 'buyOrderId']}
+    price: {'path': ['data', 'price']}
+    buy_order_type: {'path': ['data', 'buyOrderType']}
+    insert_date_time: 'insert_date_time'
+    modified_date_time: 'modified_date_time'

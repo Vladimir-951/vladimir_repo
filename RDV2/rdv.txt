@@ -1,0 +1,185 @@
+
+--Создаем stg таблицу
+create table test_dataset.stg_trips(
+    trip_id int64 not null
+  , subscriber_type string not null
+  , bike_id int64 
+  , start_time timestamp not null
+  , start_station_id int64 
+  , end_station_id int64 
+  , duration_minutes int64 not null
+  )
+
+--Создаем таблицу для регистрации загрузок
+create table test_dataset.etl_data_load(
+    load_id int64 not null
+  , src_name string not null 
+  , table_name string not null
+  , load_dttm timestamp not null
+  , business_dt date not null
+  )
+  
+--Вставка в stg. Имитация бизнес даты
+insert into test_dataset.stg_trips (
+    select 
+	    trip_id, 
+		subscriber_type, 
+		cast(bikeid as int64), 
+		start_time, 
+		start_station_id, 
+		end_station_id, 
+		duration_minutes 
+	  from `bigquery-public-data.austin_bikeshare.bikeshare_trips` 
+	 where start_time >= '2015-10-02' 
+	   and start_time < '2015-10-03')
+	   
+	   
+--Регистрация загрузки в etl_data_load
+insert into test_dataset.etl_data_load (
+  select distinct
+    ifnull((select max(load_id) + 1 from test_dataset.etl_data_load), 1) as load_id
+    , 'GBQ' as src_name
+    , 'bikeshare_trips' as table_name
+    , cast(current_datetime() as timestamp) as load_dttm
+    , cast(stg.start_time as date) as business_dt 
+    from test_dataset.stg_trips stg
+        left join test_dataset.etl_data_load etl
+           on etl.src_name = 'GBQ'
+          and etl.table_name = 'bikeshare_trips'
+          and cast(stg.start_time as date) = etl.business_dt
+    where etl.load_id is null)
+	
+--craete ODS TABLE
+create table test_dataset.ods_trips(
+    load_id int64 not null
+  , load_dttm timestamp not null
+  , trip_id int64 not null
+  , subscriber_type string not null
+  , bike_id int64 
+  , start_time timestamp not null
+  , start_station_id int64 
+  , end_station_id int64 
+  , duration_minutes int64 not null
+  )
+  
+  
+-- insert into ods
+ insert into test_dataset.ods_trips(
+  select
+      etl.load_id
+    , etl.load_dttm
+    , stg.trip_id
+    , stg.subscriber_type
+    , stg.bike_id
+    , stg.start_time
+    , stg.start_station_id
+    , stg.end_station_id
+    , stg.duration_minutes
+    from test_dataset.stg_trips stg
+      inner join test_dataset.etl_data_load etl
+         on etl.src_name = 'GBQ'
+        and etl.table_name = 'bikeshare_trips'
+        and cast(stg.start_time as date) = etl.business_dt 
+      left join test_dataset.ods_trips tgt
+         on tgt.load_id = etl.load_id
+        and stg.trip_id = tgt.trip_id
+    where tgt.load_id is null)
+
+
+
+--create HUB
+create table test_dataset.rdv_hub_trips(
+    hk_trip bytes not null
+  , load_id int64 not null
+  , load_dttm timestamp not null
+  , trip_id int64 not null
+  )
+
+--insert HUB
+insert into test_dataset.rdv_hub_trips (
+  select distinct
+      MD5(cast(stg.trip_id as string)) as hk_trip 
+    , etl.load_id
+    , etl.load_dttm
+    , stg.trip_id
+    from test_dataset.stg_trips stg
+      inner join test_dataset.etl_data_load etl
+         on etl.src_name = 'GBQ'
+        and etl.table_name = 'bikeshare_trips'
+        and cast(stg.start_time as date) = etl.business_dt
+      left join test_dataset.rdv_hub_trips rdv
+        on MD5(cast(stg.trip_id as string)) = rdv.hk_trip
+    where rdv.hk_trip is null)
+
+
+--create st
+create table test_dataset.rdv_st_trips(
+    hk_trip bytes not null
+  , load_id int64 not null
+  , load_dttm timestamp not null
+  , hash_diff bytes not null
+  , subscriber_type string not null
+  , bike_id int64
+  , start_time timestamp not null
+  , start_station_id int64 
+  , end_station_id int64
+  , duration_minutes int64 not null
+  )
+  
+  
+--insert st
+insert into test_dataset.rdv_st_trips (
+  select distinct
+      MD5(cast(stg.trip_id as string)) as hk_trip 
+      , etl.load_id
+      , etl.load_dttm
+      , MD5(concat(ifnull(stg.subscriber_type, ''), ifnull(cast(stg.bike_id as string), ''), ifnull(cast(stg.start_time as string), ''), ifnull(cast(stg.start_station_id as string), ''), ifnull(cast(stg.end_station_id as string), ''), ifnull(cast(stg.duration_minutes as string), ''))) as hash_diff
+      , stg.subscriber_type
+      , stg.bike_id
+      , stg.start_time
+      , stg.start_station_id
+      , stg.end_station_id
+      , stg.duration_minutes
+      from test_dataset.stg_trips stg
+        inner join test_dataset.etl_data_load etl
+           on etl.src_name = 'GBQ'
+          and etl.table_name = 'bikeshare_trips'
+          and cast(stg.start_time as date) = etl.business_dt
+        left join test_dataset.rdv_st_trips rdv
+           on MD5(cast(stg.trip_id as string)) = rdv.hk_trip
+          and MD5(concat(ifnull(stg.subscriber_type, ''), ifnull(cast(stg.bike_id as string), ''), ifnull(cast(stg.start_time as string), ''), ifnull(cast(stg.start_station_id as string), ''), ifnull(cast(stg.end_station_id as string), ''), ifnull(cast(stg.duration_minutes as string), ''))) = rdv.hash_diff
+      where rdv.hk_trip is null)
+	  
+	  
+--create mart
+create view test_dataset.rdv_mart as 
+    select
+        trip_id 
+      , subscriber_type
+      , bike_id
+      , start_time
+      , start_station_id
+      , end_station_id
+      , duration_minutes 
+      , row_num
+      from (
+           select  
+               trip_id 
+             , subscriber_type
+             , bike_id
+             , start_time
+             , start_station_id
+             , end_station_id
+             , duration_minutes 
+             , row_number() over (partition by hub.trip_id, st.start_time order by st.start_time desc) as row_num
+             from `optimum-courier-252418.test_dataset.rdv_hub_trips` hub
+               inner join `optimum-courier-252418.test_dataset.rdv_st_trips` st
+                 on hub.hk_trip = st.hk_trip) as precalc
+     where row_num = 1
+  
+ --query 
+ select * from test_dataset.rdv_mart
+         
+
+
+  

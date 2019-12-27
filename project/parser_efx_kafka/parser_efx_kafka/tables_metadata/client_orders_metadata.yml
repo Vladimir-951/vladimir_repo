@@ -1,0 +1,82 @@
+ClientOrders:
+  sql: "merge into {env}_gmta.efx.client_orders as tgt using (
+          values ({source_values})
+        ) as src ({source_attributes})
+        on tgt.efx_order_id = src.efx_order_id and tgt.update_time = src.update_time
+        when not matched then
+          insert ({source_attributes})
+          values ({source_values});"
+
+  sql_delete: "delete from {env}_gmta.efx.client_orders where update_time >= '{batch_tz_transact_time}';"
+
+  main_path:
+    header: ['descriptor']
+    table_name: ['descriptor', 'name']
+
+  path:
+    client_user_id: {'path': ['data', 'clientUserId']}
+    order_term_quantity_near: {'path': ['data', 'orderTermQuantityNear']}
+    symbol: {'path': ['data', 'symbol']}
+    client_account: {'path': ['data', 'clientAccount']}
+    efx_order_id: {'path': ['data', 'efxOrderId']}
+    far_value_date: {'path': ['data', 'farValueDate']}
+    order_base_quantity_far: {'path': ['data', 'orderBaseQuantityFar']}
+    strk_ccy: {'path': ['data', 'strkCcy']}
+    source: {'path': ['data', 'source']}
+    type: {'path': ['data', 'type']}
+    netting_option: {'path': ['data', 'nettingOption']}
+    qty_base_remaining_near: {'path': ['data', 'qtyBaseRemainingNear']}
+    id: {'path': ['data', 'id']}
+    order_price_far: {'path': ['data', 'orderPriceFar']}
+    state: {'path': ['data', 'state']}
+    avg_trd_price_executed_near: {'path': ['data', 'avgTrdPriceExecutedNear']}
+    strategy_state: {'path': ['data', 'strategyState']}
+    time_in_force: {'path': ['data', 'timeInForce']}
+    zri_check_id: {'path': ['data', 'zriCheckId']}
+    far_tenor: {'path': ['data', 'farTenor']}
+    client_order_id: {'path': ['data', 'clientOrderId']}
+    near_tenor: {'path': ['data', 'nearTenor']}
+    term_currency: {'path': ['data', 'termCurrency']}
+    fixing_date: {'path': ['data', 'fixingDate']}
+    sub_status: {'path': ['data', 'subStatus']}
+    settlement_currency: {'path': ['data', 'settlementCurrency']}
+    acceptance: {'path': ['data', 'acceptance']}
+    accepted_by: {'path': ['data', 'acceptedBy']}
+    gtc_cancel_timestamp: {'path': ['data', 'gtcCancelTimestamp']}
+    gtc_cancel_timestamp_human_readable: {'function': ['date_utc_convert', ['data', 'gtcCancelTimestamp']]}
+    avg_price_executed_near: {'path': ['data', 'avgPriceExecutedNear']}
+    fixing_source: {'path': ['data', 'fixingSource']}
+    session: {'path': ['data', 'session']}
+    base_currency: {'path': ['data', 'baseCurrency']}
+    allocations: {'path': ['data', 'allocations']}
+    tier: {'path': ['data', 'tier']}
+    order_base_quantity_near: {'path': ['data', 'orderBaseQuantityNear']}
+    strk_px: {'path': ['data', 'strkPx']}
+    submit_timestamp: {'path': ['data', 'submitTimestamp']}
+    submit_timestamp_human_readable: {'function': ['date_utc_convert', ['data', 'submitTimestamp']]}
+    currency: {'path': ['data', 'currency']}
+    is_final: {'path': ['data', 'isFinal']}
+    cash_delta: {'path': ['data', 'cashDelta']}
+    executed_by: {'path': ['data', 'executedBy']}
+    owner: {'path': ['data', 'owner']}
+    execution: {'path': ['data', 'execution']}
+    order_term_quantity_far: {'path': ['data', 'orderTermQuantityFar']}
+    product: {'path': ['data', 'product']}
+    side: {'path': ['data', 'side']}
+    cfi: {'path': ['data', 'cfi']}
+    delivery_type: {'path': ['data', 'deliveryType']}
+    last_base_qty_executed_near: {'path': ['data', 'lastBaseQtyExecutedNear']}
+    update_time: {'path': ['data', 'updateTime']}
+    update_time_human_readable: {'function': ['date_utc_convert', ['data', 'updateTime']]}
+    transport: {'path': ['data', 'transport']}
+    message: {'path': ['data', 'message']}
+    near_value_date: {'path': ['data', 'nearValueDate']}
+    order_price_near: {'path': ['data', 'orderPriceNear']}
+    qty_base_executed_near: {'path': ['data', 'qtyBaseExecutedNear']}
+    database_id: {'path': ['data', 'database_id']}
+    last_price_executed_near: {'path': ['data', 'lastPriceExecutedNear']}
+    last_trd_price_executed_near: {'path': ['data', 'lastTrdPriceExecutedNear']}
+    strategy: {'path': ['data', 'strategy']}
+    allocation_number: {'path': ['data', 'allocationNumber']}
+    insert_date_time: 'insert_date_time'
+    modified_date_time: 'modified_date_time'

@@ -1,0 +1,167 @@
+dev:
+  efx_server:
+    ip: '10.21.25.93'
+    port: 45149
+    tables: ['{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"ClientTrades","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"ClientOrders","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"CurrencyPnL","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"ClientType","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"DepositTrades","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"SORParentOrder","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"SORExecution","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"SORChildOrder","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"PositionTransferServiceData","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"Client","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"ILPTrades","dataSourceType":"DATAVIEW"}}']
+
+  logger_stream:
+    log_dir: log
+    log_file: efx_stream.log
+
+  email:
+    smtp_host: psmtp.sberbank-cib.ru
+    smtp_port: 25
+    smtp_email_from: dev_parser_efx_socket@bigdata1.msk.trd.ru
+    smtp_email_to: [egor_silchenko@sberbank-cib.ru, vladimir_kostyrya@sberbank-cib.ru, dmitry_larionov@sberbank-cib.ru]
+
+  influxdb:
+    host: bigdata4
+    port: 8086
+    database: dev_gmta_socket
+    username: dev_python_tech_loader
+    reconnect_timeout_sec: 10
+    reconnect_retries: 3
+
+  kafka_broker:
+    producer_config: {"bootstrap.servers": "bigdata1:9092,bigdata2:9092,bigdata3:9092",
+                      "client.id": "dev_parser_efx_socket",
+                      "message.max.bytes": "4194304",
+                      "acks": "all"}
+    producer_topic_deals: dev_streaming_socket_efx_deals
+
+  directories:
+    messages_dir: c:/gmta/parser_efx/messages_dir
+    messages_dir_linux: /data/parser_efx/messages_dir
+
+sit:
+  efx_server:
+    ip: '10.37.6.11'
+    port: 15949
+    tables: ['{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"ClientTrades","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"ClientOrders","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"CurrencyPnL","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"ClientType","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"DepositTrades","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"SORParentOrder","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"SORExecution","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"SORChildOrder","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"PositionTransferServiceData","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"Client","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"ILPTrades","dataSourceType":"DATAVIEW"}}']
+
+  logger_stream:
+    log_dir: log
+    log_file: efx_stream.log
+
+  email:
+    smtp_host: psmtp.sberbank-cib.ru
+    smtp_port: 25
+    smtp_email_from: sit_parser_efx_socket@bigdata1.msk.trd.ru
+    smtp_email_to: [egor_silchenko@sberbank-cib.ru, vladimir_kostyrya@sberbank-cib.ru, dmitry_larionov@sberbank-cib.ru]
+
+  influxdb:
+    host: bigdata4
+    port: 8086
+    database: sit_gmta_socket
+    username: sit_python_tech_loader
+    reconnect_timeout_sec: 10
+    reconnect_retries: 3
+
+  kafka_broker:
+    producer_config: {"bootstrap.servers": "bigdata1:9092,bigdata2:9092,bigdata3:9092",
+                      "client.id": "sit_parser_efx_socket",
+                      "message.max.bytes": "4194304",
+                      "acks": "all"}
+    producer_topic_deals: sit_streaming_socket_efx_deals
+
+  directories:
+    messages_dir: c:/gmta/parser_efx/messages_dir
+    messages_dir_linux: /data/parser_efx/messages_dir
+
+prd:
+  efx_server:
+    ip: '172.30.128.16'
+    port: 15949
+    tables: ['{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"ClientTrades","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"ClientOrders","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"CurrencyPnL","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"ClientType","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"DepositTrades","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"SORParentOrder","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"SORExecution","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"SORChildOrder","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"PositionTransferServiceData","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"Client","dataSourceType":"DATAVIEW"}}',
+             '{"type":"subscribeRequest","dataSourceDescriptor":
+                  {"correlatorId":"p1","name":"ILPTrades","dataSourceType":"DATAVIEW"}}']
+
+  logger_stream:
+    log_dir: log
+    log_file: efx_stream.log
+
+  email:
+    smtp_host: psmtp.sberbank-cib.ru
+    smtp_port: 25
+    smtp_email_from: prd_parser_efx_socket@diti1.msk.trd.ru
+    smtp_email_to: [egor_silchenko@sberbank-cib.ru, vladimir_kostyrya@sberbank-cib.ru, dmitry_larionov@sberbank-cib.ru]
+
+  influxdb:
+    host: diti3
+    port: 8086
+    database: prd_gmta_socket
+    username: prd_python_tech_loader
+    reconnect_timeout_sec: 10
+    reconnect_retries: 3
+
+  kafka_broker:
+    producer_config: {"bootstrap.servers": "diti1:9092,diti2:9092,diti3:9092",
+                      "client.id": "prd_parser_efx_socket",
+                      "message.max.bytes": "4194304",
+                      "acks": "all"}
+    producer_topic_deals: prd_streaming_socket_efx_deals
+
+  directories:
+    messages_dir: c:/gmta/parser_efx/messages_dir
+    messages_dir_linux: /data/parser_efx/messages_dir
